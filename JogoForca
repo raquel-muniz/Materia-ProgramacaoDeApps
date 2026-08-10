@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Forca</title>
+  <style>
+    body {
+      padding-top: 20px;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f4f4f4;
+    }
+
+    #word {
+      padding-top: 15px;
+      font-size: 2em;
+      letter-spacing: 10px;
+      margin: 20px 0;
+      padding-bottom: 20px;
+    }
+
+    #letters button {
+      padding: 5px;
+      margin: 3px;
+      padding: 10px;
+      font-size: 1em;
+      cursor: pointer;
+      min-width: 35px;
+      border-radius: 5px;
+    }
+
+    #letters button.used {
+      background-color: #ccc;
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    #status {
+      padding-top: 15px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+    <!-- **************** FOCO NO JAVASCRIPT **************** -->
+
+    <!-- Correção de erros 08/10/2026 -->
+
+    <!-- Arrumar o estilo, polir e conferir -->
+
+  <h1>Jogo da Forca</h1>
+  <div id="word"></div>
+  <div id="letters"></div>
+  <div id="status"></div>
+
+  <script>
+    (function() {
+    const words = ["JAVASCRIPT", "PROGRAMAR", "DESAFIO", "ALGORITMO", "COMPUTADOR", "INTERNET", "TECLADO", "MONITOR", "SISTEMA", "CODIGO", "VARIAVEL", "FUNCAO", "OBJETO", "MATRIZ", "SERVIDOR", "BANCO", "DADOS", "REDE", "SOFTWARE", "HARDWARE", "DESENVOLVEDOR", "TECNOLOGIA", "APLICATIVO", "NAVEGADOR", "INTERFACE", "PROJETO", "DEPURACAO", "COMANDO", "ARQUIVO", "PROGRAMA", "LOGICA", "SEGURANCA", "CRIPTOGRAFIA", "AUTOMACAO", "INTELIGENCIA", "ROBO", "NUVEM", "PROCESSADOR", "MEMORIA", "SENHA", "USUARIO", "CONEXAO", "PLATAFORMA", "GITHUB", "PYTHON", "HTML", "BANCO DE DADOS", "APRENDIZADO", "INOVACAO", "CRIATIVIDADE"];
+    let wordPool = [];
+    let currentIndex = 0;
+    let chosenWord = "";
+    let guessedLetters = [];
+    let attemptsLeft = 6;
+    let startTime = 0;
+
+    const wordDiv = document.getElementById("word");
+    const lettersDiv = document.getElementById("letters");
+    const statusDiv = document.getElementById("status");
+
+    // Embaralha array (Fisher–Yates)
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Inicializa lista embaralhada
+    function initWordPool() {
+        wordPool = shuffleArray([...words]);
+        currentIndex = 0;
+    }
+
+    // Pega próxima palavra sem repetir
+    function getNextWord() {
+        if (currentIndex >= wordPool.length) {
+            initWordPool(); // reembaralha quando acabar
+        }
+        return wordPool[currentIndex++];
+    }
+
+    function initGame() {
+        chosenWord = getNextWord();
+        guessedLetters = [];
+        attemptsLeft = 6;
+        startTime = Date.now();
+        renderWord();
+        renderLetters();
+        updateStatus();
+    }
+
+    function renderWord() {
+        let display = chosenWord.split("").map(letter =>
+            guessedLetters.includes(letter) ? letter : "_"
+        ).join(" ");
+        wordDiv.textContent = display;
+    }
+
+    function renderLetters() {
+        lettersDiv.innerHTML = "";
+        for (let i = 65; i <= 90; i++) {
+            const letter = String.fromCharCode(i);
+            const btn = document.createElement("button");
+            btn.textContent = letter;
+            if (guessedLetters.includes(letter)) {
+                btn.classList.add("used");
+                btn.disabled = true;
+            }
+            btn.onclick = () => guessLetter(letter);
+            lettersDiv.appendChild(btn);
+        }
+    }
+
+    function updateStatus() {
+        statusDiv.textContent = `Tentativas restantes: ${attemptsLeft}`;
+    }
+
+    function guessLetter(letter) {
+        letter = letter.toUpperCase();
+        if (!/^[A-Z]$/.test(letter)) return;
+        if (guessedLetters.includes(letter)) return;
+
+        guessedLetters.push(letter);
+        if (!chosenWord.includes(letter)) {
+            attemptsLeft--;
+        }
+        renderWord();
+        renderLetters();
+        updateStatus();
+        checkGameOver();
+    }
+
+    function checkGameOver() {
+        if (chosenWord.split("").every(letter => guessedLetters.includes(letter))) {
+            const timeTaken = ((Date.now() - startTime) / 1000).toFixed(1);
+            statusDiv.textContent = `🎉 Você venceu! A palavra era: ${chosenWord} — Tempo: ${timeTaken}s`;
+            setTimeout(initGame, 3000);
+        } else if (attemptsLeft <= 0) {
+            const timeTaken = ((Date.now() - startTime) / 1000).toFixed(1);
+            statusDiv.textContent = `💀 Você perdeu! A palavra era: ${chosenWord} — Tempo: ${timeTaken}s`;
+            setTimeout(initGame, 3000);
+        }
+    }
+
+    // Captura letras do teclado
+    document.addEventListener("keydown", (e) => {
+        guessLetter(e.key);
+    });
+
+    // Inicializa lista e jogo
+    initWordPool();
+    initGame();
+})();
+  </script>
+
+</body>
+
+</html>
