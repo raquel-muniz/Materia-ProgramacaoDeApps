@@ -56,7 +56,7 @@
 <script>
     const boardElement = document.getElementById('board');
     const statusElement = document.getElementById('status');
-    let board = Array(9).fill(null);
+    let board = new Array(9).fill(null);
     let currentPlayer = 'X';
     let gameActive = true;
 
@@ -112,7 +112,7 @@
 
     // Reinicia o jogo
     function resetGame() {
-        board = Array(9).fill(null);
+        board = new Array(9).fill(null);
         currentPlayer = 'X';
         gameActive = true;
         statusElement.textContent = `Vez do jogador ${currentPlayer}`;
