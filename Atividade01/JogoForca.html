@@ -21,7 +21,6 @@
     }
 
     #letters button {
-      padding: 5px;
       margin: 3px;
       padding: 10px;
       font-size: 1em;
@@ -32,7 +31,7 @@
 
     #letters button.used {
       background-color: #ccc;
-      color: #666;
+    color: #333;
       cursor: not-allowed;
     }
 
@@ -70,10 +69,34 @@
     const lettersDiv = document.getElementById("letters");
     const statusDiv = document.getElementById("status");
 
-    // Embaralha array (Fisher–Yates)
+    // Embaralha array (Fisher–Yates) usando aleatoriedade segura quando disponível
+    function secureRandomInt(max) {
+        if (!Number.isInteger(max) || max <= 0) {
+            throw new Error("max deve ser um inteiro positivo");
+        }
+
+        const cryptoObj = window.crypto || globalThis.crypto;
+
+        if (!cryptoObj || typeof cryptoObj.getRandomValues !== "function") {
+            throw new Error("Esse embaralhamento exige Web Crypto para gerar números aleatórios seguros.");
+        }
+
+        const range = 0x100000000; // 2^32
+        const threshold = range - (range % max);
+        const randomValue = new Uint32Array(1);
+
+        let value;
+        do {
+            cryptoObj.getRandomValues(randomValue);
+            value = randomValue[0];
+        } while (value >= threshold);
+
+        return value % max;
+    }
+
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
+            const j = secureRandomInt(i + 1);
             [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
@@ -113,7 +136,7 @@
     function renderLetters() {
         lettersDiv.innerHTML = "";
         for (let i = 65; i <= 90; i++) {
-            const letter = String.fromCharCode(i);
+            const letter = String.fromCodePoint(i);
             const btn = document.createElement("button");
             btn.textContent = letter;
             if (guessedLetters.includes(letter)) {
