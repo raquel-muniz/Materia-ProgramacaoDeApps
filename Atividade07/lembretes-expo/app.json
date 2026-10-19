@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "Lembretes",
+    "slug": "lembretes-expo",
+    "scheme": "lembretes",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "plugins": [
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "color": "#3977D5",
+          "defaultChannel": "lembretes"
+        }
+      ]
+    ],
+    "android": {
+      "package": "com.exemplo.lembretes",
+      "permissions": [
+        "POST_NOTIFICATIONS",
+        "SCHEDULE_EXACT_ALARM"
+      ]
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

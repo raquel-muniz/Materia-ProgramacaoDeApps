@@ -1,0 +1,15 @@
+﻿# Dependências do Node.js e Expo
+node_modules/
+**/node_modules/
+
+# Arquivos gerados e caches
+.expo/
+**/.expo/
+dist/
+web-build/
+coverage/
+
+# Arquivos locais e segredos
+.env
+.env.*
+!.env.example
